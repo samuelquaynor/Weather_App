@@ -53,7 +53,7 @@ class WeatherData {
     } else {
       var now = new DateTime.now();
 
-      if (now.hour >= 15) {
+      if (now.hour >= 17) {
         return WeatherDisplayData(
             weatherImage: AssetImage('assets/images/night.jpg'),
             weatherIcon: Icon(

@@ -77,16 +77,16 @@ class Foreground extends StatelessWidget {
           elevation: 0,
           backgroundColor: Colors.transparent,
           iconTheme: IconThemeData(color: Colors.white),
-          leading: IconButton(icon: Icon(Icons.menu), onPressed: () {}),
-          actions: [
-            IconButton(
-                icon: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      'https://i.ibb.co/Z1fYsws/profile-image.jpg'),
-                  backgroundColor: Colors.black26,
-                ),
-                onPressed: () {})
-          ],
+          // leading: IconButton(icon: Icon(Icons.menu), onPressed: () {}),
+          // actions: [
+          //   IconButton(
+          //       icon: CircleAvatar(
+          //         backgroundImage: NetworkImage(
+          //             'https://i.ibb.co/Z1fYsws/profile-image.jpg'),
+          //         backgroundColor: Colors.black26,
+          //       ),
+          //       onPressed: () {})
+          // ],
         ),
         body: SingleChildScrollView(
             child: Padding(
@@ -152,68 +152,86 @@ class Foreground extends StatelessWidget {
                       ),
                       SizedBox(
                         height: _height * 0.35,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                                padding: EdgeInsets.only(right: 16.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Stack(
-                                    alignment: AlignmentDirectional.center,
-                                    children: [
-                                      ColorFiltered(
-                                          colorFilter: ColorFilter.mode(
-                                              Colors.black45, BlendMode.darken),
-                                          child: Image.network(
-                                            locations[index].imageUrl,
-                                          )),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            locations[index].text,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 19,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(locations[index].timing),
-                                          SizedBox(
-                                            height: 40,
-                                          ),
-                                          Text(
-                                            locations[index]
-                                                    .temperature
-                                                    .toString() +
-                                                '°',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 40,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 50,
-                                          ),
-                                          Text(
-                                            locations[index].weather,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ));
-                          },
-                          itemCount: null == locations ? 0 : locations.length,
-                          scrollDirection: Axis.horizontal,
-                        ),
+                        child: locations.length == 0
+                            ? Column(
+                                children: [
+                                  Text(
+                                    'Add Locations By Searching',
+                                    style: TextStyle(fontSize: 20),
+                                  )
+                                ],
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                      padding: EdgeInsets.only(right: 16.0),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: Stack(
+                                          alignment:
+                                              AlignmentDirectional.center,
+                                          children: [
+                                            ColorFiltered(
+                                                colorFilter: ColorFilter.mode(
+                                                    Colors.black45,
+                                                    BlendMode.darken),
+                                                child: Image(
+                                                  width: 200,
+                                                  height: 300,
+                                                  image:
+                                                      locations[index].imageUrl,
+                                                  fit: BoxFit.cover,
+                                                )),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  locations[index].text,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 19,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                // Text(locations[index].timing),
+                                                SizedBox(
+                                                  height: 40,
+                                                ),
+                                                Text(
+                                                  locations[index]
+                                                          .temperature
+                                                          .toString() +
+                                                      '°',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 40,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 50,
+                                                ),
+                                                Text(
+                                                  locations[index].weather,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ));
+                                },
+                                itemCount:
+                                    null == locations ? 0 : locations.length,
+                                scrollDirection: Axis.horizontal,
+                              ),
                       )
                       // LocationRow(height: _height)
                     ],
@@ -330,7 +348,7 @@ class Location {
   final String text;
   final String timing;
   final String weather;
-  final String imageUrl;
+  final AssetImage imageUrl;
   final int temperature;
 
   Location(
@@ -351,7 +369,7 @@ void getCityWeatherData(String cityName) async {
       text: cityName.toUpperCase(),
       timing: '7:44 am',
       weather: cityData.cityDescription.toUpperCase(),
-      imageUrl: 'https://i.ibb.co/7WyTr6q/3.png',
+      imageUrl: AssetImage('assets/images/sunny.jpg'),
     ));
   }
 }

@@ -16,18 +16,31 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.deepPurpleAccent, Colors.lightBlueAccent])),
-        child: Center(
-          child: SpinKitWanderingCubes(
-            color: Colors.white,
-            size: 100.0,
-          ),
-        ),
-      ),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/images/background.jpg'),
+                  fit: BoxFit.cover)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Weather App',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 50,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              SpinKitWave(
+                color: Colors.white,
+                size: 50.0,
+              ),
+            ],
+          )),
     );
   }
 
