@@ -1,8 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:weather_app/utils/weather.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key key, this.weatherData}) : super(key: key);
+  final WeatherData weatherData;
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int temperature;
+  Icon weatherDisplayIcon;
+  AssetImage backgroundImage;
+
+  void updateDisplayInfo(WeatherData weatherData) {
+    setState(() {
+      temperature = weatherData.currentTemperature.round();
+      WeatherDisplayData weatherDisplayData =
+          weatherData.getWeatherDisplayData();
+      backgroundImage = weatherDisplayData.weatherImage;
+      weatherDisplayIcon = weatherDisplayData.weatherIcon;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateDisplayInfo(widget.weatherData);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +39,10 @@ class HomeScreen extends StatelessWidget {
       children: [
         Positioned(
           bottom: _height / 2.4,
-          child: Image.network('https://i.ibb.co/Y2CNM8V/new-york.jpg'),
+          child: Image(
+            image: backgroundImage,
+            fit: BoxFit.cover,
+          ),
           height: _height,
         ),
         Positioned(
@@ -22,16 +52,16 @@ class HomeScreen extends StatelessWidget {
               width: _width,
               color: Color(0xFF2D2C35),
             )),
-        Foreground()
+        Foreground(temperature: temperature)
       ],
     );
   }
 }
 
 class Foreground extends StatelessWidget {
-  const Foreground({
-    Key key,
-  }) : super(key: key);
+  Foreground({this.temperature});
+
+  final int temperature;
 
   @override
   Widget build(BuildContext context) {
@@ -42,122 +72,225 @@ class Foreground extends StatelessWidget {
           Radius.circular(30.0),
         ));
     return Scaffold(
-      backgroundColor: Colors.black54,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.white),
-        leading: IconButton(icon: Icon(Icons.menu), onPressed: () {}),
-        actions: [
-          IconButton(
-              icon: CircleAvatar(
-                backgroundImage:
-                    NetworkImage('https://i.ibb.co/Z1fYsws/profile-image.jpg'),
-                backgroundColor: Colors.black26,
-              ),
-              onPressed: () {})
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18),
-            child: DefaultTextStyle(
-              style: GoogleFonts.raleway(color: Colors.white),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Text(
-                    'Hello Samuel',
-                    style: TextStyle(fontSize: 30),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Check the weather by the city',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: 35,
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                        border: inputBorder,
-                        enabledBorder: inputBorder,
-                        focusedBorder: inputBorder,
-                        hintText: 'Search City',
-                        hintStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                        suffixIcon: Icon(
-                          Icons.search,
-                          color: Colors.white,
-                        )),
-                  ),
-                  SizedBox(
-                    height: 110,
-                  ),
-                  Locations(),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        backgroundColor: Colors.black54,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          iconTheme: IconThemeData(color: Colors.white),
+          leading: IconButton(icon: Icon(Icons.menu), onPressed: () {}),
+          actions: [
+            IconButton(
+                icon: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      'https://i.ibb.co/Z1fYsws/profile-image.jpg'),
+                  backgroundColor: Colors.black26,
+                ),
+                onPressed: () {})
+          ],
+        ),
+        body: SingleChildScrollView(
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18),
+                child: DefaultTextStyle(
+                  style: GoogleFonts.raleway(color: Colors.white),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (var location in locations)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Stack(
-                            alignment: AlignmentDirectional.center,
-                            children: [
-                              ColorFiltered(
-                                  colorFilter: ColorFilter.mode(
-                                      Colors.black45, BlendMode.darken),
-                                  child: Image.network(
-                                    location.imageUrl,
-                                    height: _height * 0.35,
-                                  )),
-                              Column(
-                                children: [
-                                  Text(
-                                    location.text,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 19,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(location.timing),
-                                  SizedBox(
-                                    height: 40,
-                                  ),
-                                  Text(
-                                    location.temperature.toString() + '°',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 50,
-                                  ),
-                                  Text(location.weather)
-                                ],
-                              )
-                            ],
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'My Location',
+                            style: TextStyle(
+                                fontSize: 40, fontWeight: FontWeight.w600),
                           ),
-                        )
+                          Text(
+                            '$temperature°',
+                            style: TextStyle(
+                                fontSize: 65, fontWeight: FontWeight.w500),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 65,
+                      ),
+                      Text(
+                        'Check the weather by the city',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextField(
+                        onSubmitted: (text) {
+                          getCityWeatherData(text);
+                        },
+                        decoration: InputDecoration(
+                            border: inputBorder,
+                            enabledBorder: inputBorder,
+                            focusedBorder: inputBorder,
+                            hintText: 'Search City',
+                            hintStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600),
+                            suffixIcon: Icon(
+                              Icons.search,
+                              color: Colors.white,
+                            )),
+                      ),
+                      SizedBox(
+                        height: 70,
+                      ),
+                      Locations(),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      SizedBox(
+                        height: _height * 0.35,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                                padding: EdgeInsets.only(right: 16.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Stack(
+                                    alignment: AlignmentDirectional.center,
+                                    children: [
+                                      ColorFiltered(
+                                          colorFilter: ColorFilter.mode(
+                                              Colors.black45, BlendMode.darken),
+                                          child: Image.network(
+                                            locations[index].imageUrl,
+                                          )),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            locations[index].text,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 19,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          Text(locations[index].timing),
+                                          SizedBox(
+                                            height: 40,
+                                          ),
+                                          Text(
+                                            locations[index]
+                                                    .temperature
+                                                    .toString() +
+                                                '°',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 40,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 50,
+                                          ),
+                                          Text(
+                                            locations[index].weather,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ));
+                          },
+                          itemCount: null == locations ? 0 : locations.length,
+                          scrollDirection: Axis.horizontal,
+                        ),
+                      )
+                      // LocationRow(height: _height)
                     ],
-                  )
-                ],
-              ),
-            )),
-      ),
+                  ),
+                ))));
+  }
+}
+
+class LocationRow extends StatelessWidget {
+  const LocationRow({
+    Key key,
+    @required double height,
+  })  : _height = height,
+        super(key: key);
+
+  final double _height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Expanded(
+            child: ListView.builder(
+          itemBuilder: (context, index) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      ColorFiltered(
+                          colorFilter: ColorFilter.mode(
+                              Colors.black45, BlendMode.darken),
+                          child: Image.network(
+                            locations[index].imageUrl,
+                            height: _height * 0.35,
+                          )),
+                      Column(
+                        children: [
+                          Text(
+                            locations[index].text,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 19,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(locations[index].timing),
+                          SizedBox(
+                            height: 40,
+                          ),
+                          Text(
+                            locations[index].temperature.toString() + '°',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 50,
+                          ),
+                          Text(locations[index].weather)
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+          itemCount: null == locations ? 0 : locations.length,
+        ))
+      ],
     );
   }
 }
@@ -204,35 +337,21 @@ class Location {
       {this.temperature, this.text, this.timing, this.weather, this.imageUrl});
 }
 
-final locations = [
-  Location(
-    text: 'New York',
-    timing: '10:44 am',
-    temperature: 15,
-    weather: 'Cloudy',
-    imageUrl: 'https://i.ibb.co/df35Y8Q/2.png',
-  ),
-  Location(
-    text: 'San Francisco',
-    timing: '7:44 am',
-    temperature: 6,
-    weather: 'Raining',
-    imageUrl: 'https://i.ibb.co/7WyTr6q/3.png',
-  ),
-];
+final locations = [];
 
-// class StackWidget extends StatelessWidget {
-//   const StackWidget({Key key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Stack(
-//       children: [
-//         Image.network(
-//           locations.imageUrl,
-//           height: height,
-//         )
-//       ],
-//     );
-//   }
-// }
+void getCityWeatherData(String cityName) async {
+  WeatherDataByCity cityData = WeatherDataByCity();
+  await cityData.getCityTemperature(cityName);
+
+  if (cityData.cityTemperature == null || cityData.cityCondition == null) {
+    print('City Data is empty');
+  } else {
+    locations.add(Location(
+      temperature: cityData.cityTemperature.round(),
+      text: cityName.toUpperCase(),
+      timing: '7:44 am',
+      weather: cityData.cityDescription.toUpperCase(),
+      imageUrl: 'https://i.ibb.co/7WyTr6q/3.png',
+    ));
+  }
+}
